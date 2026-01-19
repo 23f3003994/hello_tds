@@ -3,7 +3,8 @@
 #instead of using Flask, we are using FastAPI for better performance and async support
 from fastapi import FastAPI,Path
 from typing import Optional
-
+from pydantic import BaseModel
+#uv add pydantic
 
 app = FastAPI()
 
@@ -12,8 +13,15 @@ def home():
  return { "message": "Hello TDS!"}
 
 students={
-   1: {"name": "Alice", "age": 21,"class": "year 12" },
+   1: {"name": "Alice", "age": 21,"class_name": "year 12" },
 }
+
+#Pydantic model for student ie, it acts as a schema/structure for student data validation
+class Student(BaseModel):
+    name: str
+    age: int
+    class_name: str
+
 
 
 #@app.route("/student/<int:student_id>")  # Flask style
@@ -54,6 +62,16 @@ def get_student_by_name(*,student_id: int, name: Optional[str] = None,test:int):
             return students[id]
     return {"error": "Student not found"}
 
+
+@app.post("/create-student/{student_id}")
+def create_student(student_id: int, student: Student):
+    #post has a request body
+    #the params in the above api function are taken from the request body automatically by FastAPI if they are of type Pydantic model, so here student param is taken from request body,student-id is taken from path(its a path param)
+    # so student param will have the data sent in the request body as json
+    if student_id in students:
+        return {"error": "Student already exists"}
+    students[student_id] = student
+    return {"message": "Student created successfully"}
 
 import uvicorn
 
