@@ -121,6 +121,19 @@ def update_student(student_id: int, student: UpdateStudent):
     return {"student":students[student_id],"message": "Student updated successfully"}
 
 
+#DELETE method to delete a student
+@app.delete("/delete-student/{student_id}")
+def delete_student(student_id: int):
+    if student_id not in students:
+        return {"error": "Student not found"}
+    #practically i think instead of a simple dict we can use a database to store student data, so here we are simulating that with a simple dict
+    #if a db, then here it would be - query the student from db first
+    # student_obj = db_session.query(StudentModel).filter(StudentModel.id == student_id).
+    # db_session.delete(student_obj)
+    # db_session.commit()
+
+    del students[student_id]
+    return {"message": "Student deleted successfully"}
 
 
 
