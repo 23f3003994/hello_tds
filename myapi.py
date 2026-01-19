@@ -29,13 +29,14 @@ def get_student(student_id: int = Path(description="The ID of the student to ret
 
 
 #QUERY PARAMS
-@app.get("/get-by-name")
-# def get_student_by_name(name: str=None):
-def get_student_by_name(test: int, name:Optional[str]=None):
-    for student_id in students:
-        if students[student_id]["name"] == name:
-            return students[student_id]
-    return {"error": "Student not found"}
+# @app.get("/get-by-name")
+# # def get_student_by_name(name: str=None):
+# def get_student_by_name(test: int, name:Optional[str]=None):
+#     for student_id in students:
+#         if students[student_id]["name"] == name:
+#             return students[student_id]
+#     return {"error": "Student not found"}
+
 #str=None means its(query param) optional, if not provided it will be None(otherwise it will be a required query param in swagger ui docs)
 #Optional imported from typing module is used to indicate that the parameter can be of type str or None, it is more explicit and helps with type checking.
 #note test is a required query param here as no default value is given. and it must come before the optional params. coz parms with default values come last.
@@ -44,6 +45,16 @@ def get_student_by_name(test: int, name:Optional[str]=None):
 
 # use the below one ie run uv run myapi.py  (python3 myapi.py wont work directly as uvicorn is needed to run fastapi apps, and it is installed in the uv environment only)
 #  or can run directly in terminal with: uv run uvicorn myapi:app --reload --host 127.0.0.1 --port 8000
+
+#COMBINING PATH AND QUERY PARAMS
+@app.get("/get-by-name/{student_id}")
+def get_student_by_name(*,student_id: int, name: Optional[str] = None,test:int):
+    for id in students:
+        if students[id]["name"] == name and id==student_id:
+            return students[id]
+    return {"error": "Student not found"}
+
+
 import uvicorn
 
 if __name__ == "__main__":
