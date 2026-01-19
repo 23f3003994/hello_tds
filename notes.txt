@@ -1,0 +1,22 @@
+uv init hello_tds  - in terminal
+cd hello_tds
+uv add FastAPI uvicorn 
+
+create hello.py in hello_tds
+add code in it 
+save the file (very imp)
+
+run in the terminal
+uv run uvicorn hello:app --reload --host 127.0.0.1 --port 8000
+
+or
+# use the below codes in hello.py and
+ run 
+ uv run hello.py
+ in terminal
+
+ 
+import uvicorn
+
+if __name__ == "__main__":
+    uvicorn.run(app,port=8000) 
