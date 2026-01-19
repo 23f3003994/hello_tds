@@ -1,7 +1,7 @@
 #q25 FASTAPI
 
 #instead of using Flask, we are using FastAPI for better performance and async support
-from fastapi import FastAPI
+from fastapi import FastAPI,Path
 
 
 app = FastAPI()
@@ -20,9 +20,14 @@ students={
 #    return students.get(student_id, {"error": "Student not found"})
 
 @app.get("/student/{student_id}")
-def get_student(student_id: int):   
+def get_student(student_id: int = Path(description="The ID of the student to retrieve", gt=0,lt=3)):   
     return students.get(student_id, {"error": "Student not found"})
 #or return student[student_id]  will give keyerror if id not found
+#Path is used to add extra validation and description to the path parameter student_id, like gt=0 means greater than 0, you can add lt,ge,le etc for validation
+#check swagger docs at http://127.0.0.0:8000/docs for more info
+
+
+
 
 
 
