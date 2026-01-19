@@ -137,29 +137,6 @@ def delete_student(student_id: int):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import uvicorn
 
 if __name__ == "__main__":
