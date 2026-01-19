@@ -1,5 +1,7 @@
 #q25 FASTAPI
 
+#note sice there is no DB the student we create or update will not persist across server restarts, as we are using a simple dict to store student data in memory only., it will persist only during the server runtime.
+
 #instead of using Flask, we are using FastAPI for better performance and async support
 from fastapi import FastAPI,Path
 from typing import Optional
@@ -22,6 +24,12 @@ class Student(BaseModel):
     age: int
     class_name: str
 
+#Pydantic model for updating student ie, all fields are optional here
+#coz in update we may not want to update all fields
+class UpdateStudent(BaseModel):
+    name: Optional[str] = None
+    age: Optional[int] = None
+    class_name: Optional[str] = None
 
 
 #@app.route("/student/<int:student_id>")  # Flask style
@@ -62,7 +70,7 @@ def get_student_by_name(*,student_id: int, name: Optional[str] = None,test:int):
             return students[id]
     return {"error": "Student not found"}
 
-
+#post method to create a new student
 @app.post("/create-student/{student_id}")
 def create_student(student_id: int, student: Student):
     #post has a request body
@@ -70,8 +78,74 @@ def create_student(student_id: int, student: Student):
     # so student param will have the data sent in the request body as json
     if student_id in students:
         return {"error": "Student already exists"}
+    #practically i think instead of a simple dict we can use a database to store student data, so here we are simulating that with a simple dict
+    #if a db, then here it would be - student_obj=StudentModel(**student.dict())  # create a new student object from the Pydantic model data,and then
+    # db_session.add(student_obj)
+    # db_session.commit()
+
     students[student_id] = student
-    return {"message": "Student created successfully"}
+    return {"student":students[student_id],"message": "Student created successfully"}
+
+# Yes, the Pydantic model is still needed even when using a database. Here's why:
+
+# Request validation & parsing: FastAPI uses the Pydantic model to automatically validate and parse the incoming JSON request body. This happens at the API boundary before the data reaches your function.
+
+# API documentation: The Pydantic model generates the Swagger/OpenAPI documentation showing clients what data structure to send.
+
+# Separation of concerns: You typically have:
+
+# Pydantic model (e.g., Student) - defines your API contract/request schema
+# Database model (e.g., StudentModel) - defines how data is stored in the database
+# So your code pattern would look like:
+
+#PUT method to update existing student
+@app.put("/update-student/{student_id}")
+def update_student(student_id: int, student: UpdateStudent):
+    if student_id not in students:
+        return {"error": "Student not found"}
+    #practically i think instead of a simple dict we can use a database to store student data, so here we are simulating that with a simple dict
+    #if a db, then here it would be - query the student from db first
+    # student_obj = db_session.query(StudentModel).filter(StudentModel.id == student_id).
+    # db_session.add(student_obj)
+    # db_session.commit()
+
+    #modify only the fields provided in the update request, others are kept intact
+    if student.name is not None:
+        students[student_id].name = student.name
+    if student.age is not None:
+        students[student_id].age = student.age
+    if student.class_name is not None:
+        students[student_id].class_name = student.class_name
+
+    #instead of above if we just use students[student_id] = student , it will overwrite the entire student data with only the fields provided in the update request, and the fields not provided will be lost/nullified.
+    return {"student":students[student_id],"message": "Student updated successfully"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import uvicorn
 
