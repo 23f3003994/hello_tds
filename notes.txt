@@ -6,9 +6,10 @@ create hello.py in hello_tds
 add code in it 
 save the file (very imp)
 
-run in the terminal
+run in the terminal  (if uvicorn is not globally installed)
 uv run uvicorn hello:app --reload --host 127.0.0.1 --port 8000
-
+(if uvicorn is globally installed, just do )
+uvicorn hello:app --reload --host 127.0.0.1 --port 8000
 or
 # use the below codes in hello.py and
  run 
