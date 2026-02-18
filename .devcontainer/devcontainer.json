@@ -1,6 +1,8 @@
 {
   "name": "ga2-a752d8",
 
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+
   "features": {
     "ghcr.io/devcontainers/features/python:1": {}
   },
@@ -14,5 +16,5 @@
     }
   },
 
-  "postCreateCommand": "uv pip install fastapi"
+  "postCreateCommand": "pip install uv && uv pip install fastapi"
 }
